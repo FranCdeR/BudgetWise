@@ -24,45 +24,41 @@
 
 
 
-<!-- Main Content -->
 <div class="main-container">
 
-    <!-- REGISTER SCREEN -->
-<div class="screen" id="registerScreen">
-    <div class="container">
-        <div class="login-card">
-            <div class="logo-section">
-                <h1 class="logo-text">Join Us</h1>
-                <p class="logo-subtitle">Create your BudgetWise account</p>
-            </div>
-            <form id="registerForm">
-                <div class="input-group">
-                    <i class="fas fa-user icon"></i>
-                    <input type="text" id="regUsername" placeholder="Choose Username" required>
+    <div class="screen" id="registerScreen">
+        <div class="container">
+            <div class="login-card">
+                <div class="logo-section">
+                    <h1 class="logo-text">Join Us</h1>
+                    <p class="logo-subtitle">Create your BudgetWise account</p>
                 </div>
-                <div class="input-group">
-                    <i class="fas fa-lock icon"></i>
-                    <input type="password" id="regPassword" placeholder="Choose Password" required>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <i class="fas fa-user icon"></i>
+                        <input type="text" id="regUsername" placeholder="Choose Username" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock icon"></i>
+                        <input type="password" id="regPassword" placeholder="Choose Password" required>
+                    </div>
+                    <button type="submit" class="btn-login">Create Account</button>
+                </form>
+                <div class="form-footer">
+                    <a href="#" class="link" onclick="showScreen('loginScreen')">Already have an account? Sign In</a>
+                    <br>
+                    <div style="margin-top: 15px;">
+                        <button type="button" class="disclaimer-btn" style="margin-top: 0;" onclick="openDisclaimer()">Read Disclaimer</button>
+                        <span style="color: #a29bfe; margin: 0 10px; opacity: 0.5;">|</span>
+                        <button type="button" class="disclaimer-btn" style="margin-top: 0;" onclick="openCredits()">Credits</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn-login">Create Account</button>
-            </form>
-            <div class="form-footer">
-                <br>
-                <div style="margin-top: 15px;">
-                    <button type="button" class="disclaimer-btn" style="margin-top: 0;" onclick="openDisclaimer()">Read Disclaimer</button>
-                    <span style="color: #a29bfe; margin: 0 10px; opacity: 0.5;">|</span>
-                    <button type="button" class="disclaimer-btn" style="margin-top: 0;" onclick="openCredits()">Credits</button>
             </div>
         </div>
     </div>
 
-</div>
+    <div class="screen" id="confirmScreen"></div>
 
-<!-- CONFIRMATION SCREEN -->
-<div class="screen" id="confirmScreen">
-
-</div>
-    <!-- LOGIN SCREEN -->
     <div class="screen active" id="loginScreen">
         <div class="container">
             <div class="login-card">
@@ -89,10 +85,15 @@
                 
                 <div class="form-footer">
                     <a href="#" class="link" onclick="showRegister(event)">Create Account</a>
-                    <br> <button type="button" class="disclaimer-btn" onclick="openDisclaimer()">Read Disclaimer</button>
-             </div>
+                    <br>
+                    <div style="margin-top: 15px;">
+                        <button type="button" class="disclaimer-btn" style="margin-top: 0;" onclick="openDisclaimer()">Read Disclaimer</button>
+                        <span style="color: #a29bfe; margin: 0 10px; opacity: 0.5;">|</span>
+                        <button type="button" class="disclaimer-btn" style="margin-top: 0;" onclick="openCredits()">Credits</button>
+                    </div>
+                </div>
             </div>
-    </div>
+        </div>
     </div>
 
     <!-- DASHBOARD SCREEN -->
