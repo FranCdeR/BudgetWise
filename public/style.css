@@ -572,3 +572,32 @@ html, body {
 .close-modal-btn:hover {
     background: #059669;
 }
+
+/* --- CREDITS LIST STYLES --- */
+.credits-list {
+    list-style: none; /* Removes the default bullet points */
+    padding: 0;
+    margin: 20px 0;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05); /* Slight highlight box */
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.credits-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #d1d5db; /* Light grey text */
+    font-size: 0.95rem;
+}
+
+/* Removes the line under the last name */
+.credits-list li:last-child {
+    border-bottom: none;
+}
+
+.credits-list strong {
+    color: #ffffff; /* Makes the names pop out in bright white */
+    display: inline-block;
+    min-width: 140px; /* Aligns the roles neatly in a column */
+}
