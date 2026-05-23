@@ -342,3 +342,15 @@ function updateCategoryRemaining() {
     display.textContent = `Remaining: ₱${left.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
     display.style.color = left < 0 ? '#ff4757' : '#2ecc71';
 }
+
+// --- DISCLAIMER MODAL LOGIC ---
+
+function openDisclaimer() {
+    // Changes the display from 'none' to 'flex' so it appears and centers
+    document.getElementById('disclaimerModal').style.display = 'flex';
+}
+
+function closeDisclaimer() {
+    // Hides the modal again
+    document.getElementById('disclaimerModal').style.display = 'none';
+}
