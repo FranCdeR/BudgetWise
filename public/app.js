@@ -354,3 +354,12 @@ function closeDisclaimer() {
     // Hides the modal again
     document.getElementById('disclaimerModal').style.display = 'none';
 }
+
+// --- CREDITS MODAL LOGIC ---
+function openCredits() {
+    document.getElementById('creditsModal').style.display = 'flex';
+}
+
+function closeCredits() {
+    document.getElementById('creditsModal').style.display = 'none';
+}
