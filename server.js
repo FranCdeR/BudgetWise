@@ -10,11 +10,11 @@ app.use(express.static('public'));
 
 // Added MYSQLPORT so Railway can find the database
 const db = mysql.createConnection({
-    host: process.env.MYSQLHOST || 'localhost',
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQLPASSWORD || '',
-    database: process.env.MYSQLDATABASE || 'budgetwise_db',
-    port: process.env.MYSQLPORT || 3306 
+    host: process.env.MYSQL_HOST || 'localhost',
+    user: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'budgetwise_db',
+    port: process.env.MYSQL_PORT || 3306 
 });
 
 db.connect((err) => {
