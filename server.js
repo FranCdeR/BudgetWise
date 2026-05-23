@@ -8,11 +8,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Added MYSQLPORT so Railway can find the database
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'budgetwise_db'
+    host: process.env.MYSQLHOST || 'localhost',
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQLDATABASE || 'budgetwise_db',
+    port: process.env.MYSQLPORT || 3306 
 });
 
 db.connect((err) => {
@@ -21,9 +23,7 @@ db.connect((err) => {
 });
 
 app.post('/api/register', async (req, res) => {
-    console.log(`\n📝 Registration attempt for: ${req.body.username}`);
     const { username, password } = req.body;
-    
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (results.length > 0) return res.status(400).json({ message: 'Username already exists!' });
         try {
@@ -31,70 +31,40 @@ app.post('/api/register', async (req, res) => {
             const insertQuery = "INSERT INTO users (username, password, budget_data, expense_data) VALUES (?, ?, '{}', '{}')";
             db.query(insertQuery, [username, hashedPassword], (err) => {
                 if (err) return res.status(500).json({ message: 'Database error' });
-                console.log(`✅ User ${username} registered successfully!`);
                 res.status(200).json({ message: 'Account created successfully!' });
             });
-        } catch (error) {
-            res.status(500).json({ message: 'Server error during registration' });
-        }
+        } catch (error) { res.status(500).json({ message: 'Server error' }); }
     });
 });
 
 app.post('/api/login', (req, res) => {
-    console.log(`\n🔐 Login attempt for: ${req.body.username}`);
     const { username, password } = req.body;
-    
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (results.length > 0) {
             const user = results[0];
             const isMatch = await bcrypt.compare(password, user.password);
-            
             if (isMatch) {
                 const parsedBudgets = typeof user.budget_data === 'string' ? JSON.parse(user.budget_data) : user.budget_data;
                 const parsedExpenses = typeof user.expense_data === 'string' ? JSON.parse(user.expense_data) : user.expense_data;
-                
-                console.log(`✅ Login successful! Sending this data back to browser:`, { budgets: parsedBudgets });
-                
-                res.status(200).json({ 
-                    username: user.username,
-                    budget_data: parsedBudgets || {},
-                    expense_data: parsedExpenses || {}
-                });
-            } else {
-                res.status(401).json({ message: 'Invalid username or password.' });
-            }
-        } else {
-            res.status(401).json({ message: 'Invalid username or password.' });
-        }
+                res.status(200).json({ username: user.username, budget_data: parsedBudgets || {}, expense_data: parsedExpenses || {} });
+            } else res.status(401).json({ message: 'Invalid credentials.' });
+        } else res.status(401).json({ message: 'Invalid credentials.' });
     });
 });
 
 app.post('/api/sync', (req, res) => {
-    console.log(`\n💾 SYNC REQUEST RECEIVED from ${req.body.username}`);
-    console.log(`Payload Data:`, JSON.stringify(req.body.budget_data));
-    
     const { username, budget_data, expense_data } = req.body;
     const safeBudgets = budget_data || {};
     const safeExpenses = expense_data || {};
-    
     const updateQuery = "UPDATE users SET budget_data = ?, expense_data = ? WHERE username = ?";
-    db.query(updateQuery, [JSON.stringify(safeBudgets), JSON.stringify(safeExpenses), username], (err, results) => {
-        if (err) {
-            console.error("❌ DB ERROR:", err);
-            return res.status(500).json({ message: 'Failed to save data' });
-        }
-        
-        if (results.affectedRows === 0) {
-            console.log("⚠️ WARNING: DB query ran, but no user was found to update!");
-        } else {
-            console.log("✅ DB SUCCESS: Data saved to MySQL.");
-        }
-        
+    db.query(updateQuery, [JSON.stringify(safeBudgets), JSON.stringify(safeExpenses), username], (err) => {
+        if (err) return res.status(500).json({ message: 'Failed to save data' });
         res.status(200).json({ message: 'Data synced successfully!' });
     });
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`\n🚀 Server is actively listening on http://localhost:${PORT}`);
+// Added process.env.PORT and '0.0.0.0' so Railway can open the site to the internet
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n🚀 Server is actively listening on port ${PORT}`);
 });
