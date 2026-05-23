@@ -10,9 +10,24 @@ Introduction:
 
 System Flow / Workflow
 
-1. Account Registration New users create an account by entering a unique username and password, then verify their account using the provided confirmation code.
-2. User Login Registered users log in securely to access the budgeting system and their saved financial data.
-3. Dashboard Access After logging in, users are directed to the dashboard where they can navigate between the budgeting tool and daily expense tracker.
-4. Budget Setup Users enter their monthly allowance and allocate budgets to different spending categories such as food, transportation, school expenses, and savings.
-5. Expense Tracking Through the calendar-based tracker, users can add, view, or remove daily expenses by selecting a specific date and category.
-6. Automatic Budget Monitoring The system automatically updates remaining balances and checks whether expenses exceed the assigned category limits.
+1. Account Registration
+     New users create an account by entering a unique username and password, then verify their account using the provided confirmation code.
+2. User Login
+     Registered users log in securely to access the budgeting system and their saved financial data.
+3. Dashboard Access
+     After logging in, users are directed to the dashboard where they can navigate between the budgeting tool and daily expense tracker.
+4. Budget Setup
+     Users enter their monthly allowance and allocate budgets to different spending categories such as food, transportation, school expenses, and savings.
+5. Expense Tracking
+     Through the calendar-based tracker, users can add, view, or remove daily expenses by selecting a specific date and category.
+6. Automatic Budget Monitoring
+      The system automatically updates remaining balances and checks whether expenses exceed the assigned category limits.
+
+Technologies Used
+  • HTML – Used to create the overall structure and content of the web application, including forms, buttons, dashboards, and navigation components.
+  • CSS – Responsible for the visual design and layout of the system. It is used to improve the user interface through styling, spacing, colors, responsiveness, and overall
+  user experience.
+  • JavaScript – Handles the interactive and dynamic functionalities of the website, such as budget calculations, expense tracking, form validation, automatic balance         updates, and calendar interactions.
+  • Node.js – Serves as the backend runtime environment that manages server-side operations, handles user requests, processes application logic, and connects the system to
+  the database.
+  • MySQL – Used as the database management system for storing and organizing user information, budgeting data, expense records, and account details securely and              efficiently.
