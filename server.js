@@ -8,13 +8,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Added MYSQLPORT so Railway can find the database
+// DIAGNOSTIC LOG: This will print the variables in your Railway logs so we can see if they are blank!
+console.log("--- 🔍 DIAGNOSTIC DATABASE CHECK ---");
+console.log("Host:", process.env.MYSQLHOST || process.env.MYSQL_HOST || "BLANK - USING LOCALHOST");
+console.log("User:", process.env.MYSQLUSER || process.env.MYSQL_USER || "BLANK - USING ROOT");
+console.log("------------------------------------");
+
+// BULLETPROOF CONNECTION: Checks both spelling formats
 const db = mysql.createConnection({
-    host: process.env.MYSQL_HOST || 'localhost',
-    user: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '',
-    database: process.env.MYSQL_DATABASE || 'budgetwise_db',
-    port: process.env.MYSQL_PORT || 3306 
+    host: process.env.MYSQLHOST || process.env.MYSQL_HOST || 'localhost',
+    user: process.env.MYSQLUSER || process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQLPASSWORD || process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'budgetwise_db',
+    port: process.env.MYSQLPORT || process.env.MYSQL_PORT || 3306 
 });
 
 db.connect((err) => {
