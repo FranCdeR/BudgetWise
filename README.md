@@ -1,4 +1,4 @@
-Introduction:
+__Introduction__:
 
   Have you ever thought how your money in a day that you save for over a month are gone in a flash? maybe you just indulge in the pleasure of continuous spending without any care in the world, perhaps your friends tag you in an expensive places and you have no choice but to go, although a software are not needed for such cases only discipline, to have it you have to track your expenses, and thus this web app is built.
 
