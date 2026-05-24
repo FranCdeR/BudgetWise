@@ -15,12 +15,26 @@ console.log("User:", process.env.MYSQLUSER || process.env.MYSQL_USER || "BLANK -
 console.log("------------------------------------");
 
 // BULLETPROOF CONNECTION: Checks both spelling formats
-const db = mysql.createConnection({
-    host: process.env.MYSQLHOST || process.env.MYSQL_HOST || 'localhost',
-    user: process.env.MYSQLUSER || process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQLPASSWORD || process.env.MYSQL_PASSWORD || '',
-    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE || 'budgetwise_db',
-    port: process.env.MYSQLPORT || process.env.MYSQL_PORT || 3306 
+// REPLACE mysql.createConnection WITH mysql.createPool
+const db = mysql.createPool({
+    host: process.env.MYSQLHOST || 'localhost',
+    user: process.env.MYSQLUSER || 'root',
+    password: process.env.MYSQLPASSWORD || '',
+    database: process.env.MYSQLDATABASE || 'budgetwise_db',
+    port: process.env.MYSQLPORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10, // Allows up to 10 simultaneous connections
+    queueLimit: 0
+});
+
+// Test the pool connection
+db.getConnection((err, connection) => {
+    if (err) {
+        console.error('❌ Database connection failed:', err);
+    } else {
+        console.log('✅ Connected to MySQL Database Pool!');
+        connection.release(); // Return it to the pool
+    }
 });
 
 db.connect((err) => {
