@@ -52,23 +52,36 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     } catch (error) { alert("Server error."); }
 });
 
-document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const user = document.getElementById('regUsername').value.trim();
-    const pass = document.getElementById('regPassword').value.trim();
+// --- RESTORED LOGIN LOGIC ---
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // This stops the page from instantly refreshing!
+    
+    const user = document.getElementById('username').value.trim();
+    const pass = document.getElementById('password').value;
 
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: user, password: pass })
         });
+        
         const data = await response.json();
+        
         if (response.ok) {
-            alert("Account created! You can now log in.");
-            showScreen('loginScreen');
-        } else alert(data.message);
-    } catch (error) { alert("Server error."); }
+            // Load the user's saved data from the database into the app's memory
+            budgetsDB[user] = data.budget_data || {};
+            dailyExpensesDB[user] = data.expense_data || {};
+            
+            // Trigger the dashboard transition
+            document.getElementById('loginForm').reset(); // Clear the form
+            loginSuccess(user); 
+        } else {
+            alert(data.message || 'Invalid credentials.');
+        }
+    } catch (error) { 
+        alert("Server error. Please check your connection."); 
+    }
 });
 
 function loginSuccess(username) {
