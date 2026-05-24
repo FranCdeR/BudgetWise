@@ -184,7 +184,54 @@ function createParticles() {
 }
 window.addEventListener('resize', createParticles);
 
-function budgetMoney() { showScreen('budgetingScreen'); }
+function budgetMoney() { 
+    showScreen('budgetingScreen'); 
+    loadBudgetToScreen(); // This pulls the data from memory!
+}
+
+function loadBudgetToScreen() {
+    const today = new Date();
+    const monthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+    
+    // Check if the user has data saved for this month
+    if (budgetsDB[currentUser] && budgetsDB[currentUser][monthKey]) {
+        const savedData = budgetsDB[currentUser][monthKey];
+        
+        // 1. Put the total money back
+        document.getElementById('totalMonthlyMoney').value = savedData.total || '';
+        
+        // 2. Clear existing category values to avoid ghost data
+        document.querySelectorAll('.category-input').forEach(input => input.value = '');
+        
+        // 3. Put the category limits back
+        for (const catName in savedData.categories) {
+            let inputEl = document.querySelector(`.category-input[data-name="${catName}"]`);
+            
+            // If it's a custom category, we need to rebuild the HTML box for it!
+            if (!inputEl) {
+                const container = document.getElementById('categoryList');
+                const div = document.createElement('div');
+                div.className = 'input-group';
+                div.innerHTML = `
+                    <i class="fas fa-tag icon"></i>
+                    <input type="number" class="category-input" data-name="${catName}" placeholder="${catName}" oninput="calculateRemaining()">
+                `;
+                container.appendChild(div);
+                inputEl = div.querySelector('.category-input');
+            }
+            
+            inputEl.value = savedData.categories[catName];
+        }
+        
+        // 4. Recalculate the remaining balance at the bottom
+        calculateRemaining();
+    } else {
+        // If they have no saved budget for this month, clear the form
+        document.getElementById('totalMonthlyMoney').value = '';
+        document.querySelectorAll('.category-input').forEach(input => input.value = '');
+        calculateRemaining();
+    }
+}
 
 function addNewCategory() {
     const nameInput = document.getElementById('newCategoryName');
@@ -220,26 +267,52 @@ function calculateRemaining() {
     }
 }
 
-async function saveBudget() {
+function saveBudget() {
     const totalMoney = parseFloat(document.getElementById('totalMonthlyMoney').value) || 0;
     if (totalMoney <= 0) return alert("Please enter your Total Monthly Money first.");
 
     let categories = {};
+    let totalBudgeted = 0; // Tracks everything they assigned to a category
+
     document.querySelectorAll('.category-input').forEach(input => {
         const name = input.getAttribute('data-name');
         const limit = parseFloat(input.value) || 0;
-        if (limit > 0) categories[name] = limit;
+        if (limit > 0) {
+            categories[name] = limit;
+            totalBudgeted += limit;
+        }
     });
 
     if (!budgetsDB[currentUser]) budgetsDB[currentUser] = {};
     const today = new Date();
     const monthKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
     
+    // --- NEW: Check if a budget already exists and warn the user ---
+    if (budgetsDB[currentUser][monthKey]) {
+        const isSure = confirm("⚠️ You already have an active budget for this month! Changing your limits now might affect your daily expense tracking and budgeting schedule. Are you sure you want to overwrite your existing budget?");
+        
+        // If they click 'Cancel', stop the function immediately
+        if (!isSure) return; 
+    }
+    // ---------------------------------------------------------------
+
+    // Save to local memory
     budgetsDB[currentUser][monthKey] = { total: totalMoney, categories: categories };
     
+    // Send to the database in the background without freezing the screen
     console.log("🛑 SAVE BUTTON CLICKED!");
-    await syncData();
-    alert("Budget saved successfully to Database! Your limits are now active.");
+    syncData(); 
+
+    // Calculate unallocated funds and alert the user
+    const unallocated = totalMoney - totalBudgeted;
+    
+    if (unallocated > 0) {
+        alert(`Saved! Just a heads up: You still have ₱${unallocated.toLocaleString(undefined, {minimumFractionDigits: 2})} unallocated funds remaining for this month.`);
+    } else if (unallocated < 0) {
+        alert(`Saved! WARNING: You are over-budget by ₱${Math.abs(unallocated).toLocaleString(undefined, {minimumFractionDigits: 2})}!`);
+    } else {
+        alert("Saved! Perfect zero-based budget. Every peso has a job!");
+    }
 }
 
 let selectedDateStr = '';
