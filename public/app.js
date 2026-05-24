@@ -36,8 +36,45 @@ async function syncData() {
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const user = document.getElementById('regUsername').value.trim();
-    const pass = document.getElementById('regPassword').value.trim();
+    const pass = document.getElementById('regPassword').value;
+    const confirmPass = document.getElementById('regConfirmPassword').value;
+    const errorBox = document.getElementById('passwordError');
+    
+    // Reset error box on new submission attempt
+    errorBox.style.display = 'none';
+    errorBox.innerHTML = '';
 
+    // 1. Industry Standard Password Security Checks (Regex)
+    const minLength = pass.length >= 8;
+    const hasUpper = /[A-Z]/.test(pass);
+    const hasLower = /[a-z]/.test(pass);
+    const hasNum = /[0-9]/.test(pass);
+    const hasSpec = /[!@#$%^&*(),.?":{}|<>]/.test(pass);
+
+    // 2. Build the error message if the password is too weak
+    if (!minLength || !hasUpper || !hasLower || !hasNum || !hasSpec) {
+        errorBox.style.display = 'block';
+        errorBox.innerHTML = `
+            <strong>Password is too weak. It must contain:</strong>
+            <ul style="margin-top: 5px; padding-left: 20px;">
+                <li style="color: ${minLength ? '#2ecc71' : '#ff4757'}">At least 8 characters</li>
+                <li style="color: ${hasUpper ? '#2ecc71' : '#ff4757'}">1 Uppercase letter</li>
+                <li style="color: ${hasLower ? '#2ecc71' : '#ff4757'}">1 Lowercase letter</li>
+                <li style="color: ${hasNum ? '#2ecc71' : '#ff4757'}">1 Number</li>
+                <li style="color: ${hasSpec ? '#2ecc71' : '#ff4757'}">1 Special character</li>
+            </ul>
+        `;
+        return; // Stop the registration process
+    }
+
+    // 3. Check if passwords match
+    if (pass !== confirmPass) {
+        errorBox.style.display = 'block';
+        errorBox.innerHTML = '<strong>❌ Passwords do not match!</strong>';
+        return; // Stop the registration process
+    }
+
+    // 4. If all checks pass, proceed with sending data to the server
     try {
         const response = await fetch('/api/register', {
             method: 'POST',
@@ -45,11 +82,18 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             body: JSON.stringify({ username: user, password: pass })
         });
         const data = await response.json();
+        
         if (response.ok) {
             alert("Account created! You can now log in.");
+            document.getElementById('registerForm').reset(); // Clear the form
             showScreen('loginScreen');
-        } else alert(data.message);
-    } catch (error) { alert("Server error."); }
+        } else {
+            errorBox.style.display = 'block';
+            errorBox.innerHTML = `<strong>❌ ${data.message}</strong>`;
+        }
+    } catch (error) { 
+        alert("Server error. Please try again later."); 
+    }
 });
 
 // --- RESTORED LOGIN LOGIC ---
