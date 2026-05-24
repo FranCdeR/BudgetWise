@@ -3,8 +3,15 @@ let budgetsDB = {};
 let dailyExpensesDB = {};
 
 function showScreen(screenId) {
+    // 1. Hide all screens
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    
+    // 2. Show the requested screen
     document.getElementById(screenId).classList.add('active');
+
+    // --- 3. NEW: Clear the text boxes when switching ---
+    if (document.getElementById('loginForm')) document.getElementById('loginForm').reset();
+    if (document.getElementById('registerForm')) document.getElementById('registerForm').reset();
 }
 
 async function syncData() {
