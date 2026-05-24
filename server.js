@@ -37,11 +37,6 @@ db.getConnection((err, connection) => {
     }
 });
 
-db.connect((err) => {
-    if (err) throw err;
-    console.log('✅ Connected to MySQL Database!');
-});
-
 app.post('/api/register', async (req, res) => {
     const { username, password } = req.body;
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
